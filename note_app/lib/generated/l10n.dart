@@ -79,6 +79,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Danh mục`
+  String get category {
+    return Intl.message(
+      'Danh mục',
+      name: 'category',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ngày tạo`
+  String get date {
+    return Intl.message(
+      'Ngày tạo',
+      name: 'date',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

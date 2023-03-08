@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:note_app/view/create_or_edit_page.dart';
 
 import '../data/entity/note_entity.dart';
 import '../data/repository.dart';
@@ -9,7 +10,7 @@ import '../resource/style.dart';
 import '../utils/utils.dart';
 import '../utils/widgets/bkav_app_bar.dart';
 import '../utils/widgets/card_movie.dart';
-import '../view_model/movie/note_bloc.dart';
+import '../view_model/note/note_bloc.dart';
 import 'detail_note_page.dart';
 
 class NotePage extends StatefulWidget {
@@ -44,7 +45,7 @@ class _NotePageState extends State<NotePage> {
           backgroundColor: AppColor.background,
           appBar: CustomAppBar(
             context,
-            showDefaultBackButton: true,
+            showDefaultBackButton: false,
             title: Text("OverView",
                 style: StyleBkav.textStyleFW500(Colors.black, 18)),
             bottom:  TabBar(
@@ -60,15 +61,15 @@ class _NotePageState extends State<NotePage> {
               builder: (context, state) {
                 return const TabBarView(
                   children: [
-                    DetailNotePage(),
-                    DetailNotePage(),
-                    DetailNotePage()
+                    DetailNotePage(categoryId: 0,),
+                    DetailNotePage(categoryId: 1,),
+                    DetailNotePage(categoryId: 2,)
                   ],
                 );
               }),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              Navigator.of(context).push<void>(await DetailNotePage.route());
+              Navigator.of(context).push<void>(await CreateOrEditPage.route(categoryId: indexTab, isCreate: true));
             },
             child: const Icon(Icons.add),
           ),

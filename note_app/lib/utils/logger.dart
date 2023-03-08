@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class Logger {
 
-  static const String _tag = "movie";
+  static const String _tag = "note";
 
   static const bool _isDebug = true;
 

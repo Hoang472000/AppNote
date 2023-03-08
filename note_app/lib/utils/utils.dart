@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'constans/api_const.dart';
 
 class Utils {
@@ -45,4 +46,10 @@ class Utils {
   static String convertUrlImage(String url) {
     return ApiConst.domainImage + url;
   }
+
+  static String formatDateToString(DateTime time) {
+    DateFormat formatter = DateFormat('dd/MM/yyyy');
+    return formatter.format(time);
+  }
+
 }

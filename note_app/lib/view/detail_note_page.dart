@@ -9,13 +9,13 @@ import '../resource/style.dart';
 import '../utils/utils.dart';
 import '../utils/widgets/bkav_app_bar.dart';
 import '../utils/widgets/card_movie.dart';
-import '../view_model/movie/note_bloc.dart';
+import '../view_model/note/note_bloc.dart';
 
 class DetailNotePage extends StatefulWidget {
-  const DetailNotePage({Key? key}) : super(key: key);
-
-  static Route route() {
-    return Utils.pageRouteBuilder(const DetailNotePage(), true);
+  const DetailNotePage({Key? key, required this.categoryId}) : super(key: key);
+  final int categoryId;
+  static Route route(int categoryId) {
+    return Utils.pageRouteBuilder( DetailNotePage(categoryId: categoryId,), true);
   }
 
   @override
@@ -31,12 +31,6 @@ class _DetailNotePageState extends State<DetailNotePage> {
       ),
       child: Scaffold(
           backgroundColor: AppColor.background,
-          appBar: CustomAppBar(
-            context,
-            showDefaultBackButton: true,
-            title: Text("OverView",
-                style: StyleBkav.textStyleFW500(Colors.black, 18)),
-          ),
           body: BlocConsumer<NoteBloc, NoteState>(
               listener: (context, state) {},
               builder: (context, state) {
@@ -61,7 +55,7 @@ class _DetailNotePageState extends State<DetailNotePage> {
                               child: CircularProgressIndicator(),
                             )
                           : Center(
-                              child: Text("Tong quan"),
+                              child: Text("${widget.categoryId}"),
                             )),
                 );
               })),

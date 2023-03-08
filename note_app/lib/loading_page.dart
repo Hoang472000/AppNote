@@ -49,11 +49,13 @@ class _LoadingPageState extends State<LoadingPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset(IconAsset.icLoading),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      child: SvgPicture.asset(IconAsset.icLoading),
+                    ),
                   ),
-                  Text(DateTime.now().year.toString())
+                  Expanded(child: Container(alignment:Alignment.bottomCenter,child: Text(DateTime.now().year.toString())))
                 ],
               ),
             ),

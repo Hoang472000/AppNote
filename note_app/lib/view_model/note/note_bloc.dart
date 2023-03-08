@@ -18,8 +18,9 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
 
   FutureOr<void> _getListNote(
       GetListNote event, Emitter<NoteState> emit) async {
+    emit(state.copyWith(isShowProgress: true));
     List<Note> list = await repository.getListNote();
-    emit(state.copyWith(listNote: list));
+    emit(state.copyWith(listNote: list, isShowProgress: false));
   }
 
   FutureOr<void> _insertOrUpdateNote(
@@ -71,7 +72,7 @@ class NoteState extends BlocState {
 
   NoteState(
       {this.listNote = const [],
-      this.isShowProgress = true,
+      this.isShowProgress = false,
       this.isHasUpdateList = false});
 
   NoteState copyWith(

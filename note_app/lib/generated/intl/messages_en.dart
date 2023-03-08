@@ -23,8 +23,10 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "back": MessageLookupByLibrary.simpleMessage("back"),
+        "category": MessageLookupByLibrary.simpleMessage("Danh mục"),
         "check_internet": MessageLookupByLibrary.simpleMessage(
             "Vui lòng kiểm tra lại kết nối internet của bạn !"),
+        "date": MessageLookupByLibrary.simpleMessage("Ngày tạo"),
         "popular_list": MessageLookupByLibrary.simpleMessage("Popular list")
       };
 }

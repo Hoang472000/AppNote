@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:note_app/resource/color.dart';
 import 'package:note_app/view/note_page.dart';
-import 'package:note_app/view_model/movie/note_bloc.dart';
+import 'package:note_app/view_model/note/note_bloc.dart';
 import 'package:note_app/view_model/navigation_service.dart';
 
 import 'data/repository.dart';
