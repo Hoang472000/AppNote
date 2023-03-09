@@ -63,6 +63,11 @@ Future<void> _selectDate(BuildContext context, BuildContext contextBloc,
 }
 
 class _CreateOrEditPageState extends State<CreateOrEditPage> {
+  final titleController = TextEditingController();
+  final contentController = TextEditingController();
+  final addressController = TextEditingController();
+  bool _isNoteValid = false;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -77,11 +82,19 @@ class _CreateOrEditPageState extends State<CreateOrEditPage> {
             title: Text(widget.isCreate ? "Create Screen" : "Edit Screen",
                 style: StyleBkav.textStyleFW500(Colors.black, 18)),
             actions: [
-              IconButton(
-                  onPressed: () {},
-                  icon: widget.isCreate
-                      ? const Icon(Icons.save)
-                      : const Icon(Icons.edit)),
+              BlocBuilder<CreateOrEditBloc, CreateOrEditState>(
+                  builder: (context, state) {
+                return IconButton(
+                    onPressed: () {
+                      context.read<CreateOrEditBloc>().add(InsertOrUpdateNote(
+                          title: titleController.text,
+                          contentNote: contentController.text,
+                          address: addressController.text));
+                    },
+                    icon: widget.isCreate
+                        ? const Icon(Icons.save)
+                        : const Icon(Icons.edit));
+              }),
             ],
           ),
           body: BlocConsumer<CreateOrEditBloc, CreateOrEditState>(
@@ -207,78 +220,81 @@ class _CreateOrEditPageState extends State<CreateOrEditPage> {
                         ],
                       ),
                     ),
-                    Container(
-                      child: TextFormField(
-                        controller: TextEditingController(),
-                        focusNode: FocusNode(),
-                        decoration: InputDecoration(
-                          hintText: "Title:",
-                          labelText: "Title",
-                          errorStyle: const TextStyle(
-                              color: Colors.redAccent, fontSize: 16.0),
-                        ),
+                    TextField(
+                      controller: titleController,
+                      focusNode: FocusNode(),
+                      maxLength: 64,
+                      decoration: const InputDecoration(
+                        hintText: "Tiêu đề:",
+                        //labelText: "Title",
+                        /* errorStyle: const TextStyle(
+                            color: Colors.redAccent, fontSize: 16.0),*/
                       ),
+                      style: const TextStyle(fontSize: 16),
                     ),
-                    Container(
-                      child: TextFormField(
-                        controller: TextEditingController(),
-                        focusNode: FocusNode(),
-                        decoration: InputDecoration(
-                          hintText: "Note content:",
-                          labelText: "Note content",
-                          errorStyle: const TextStyle(
-                              color: Colors.redAccent, fontSize: 16.0),
-                        ),
-                      ),
+                    TextField(
+                      controller: contentController,
+                      focusNode: FocusNode(),
+                      maxLines: null,
+                      maxLength: 1024,
+                      decoration: const InputDecoration(
+                          hintText: "Nội dung ghi chú",
+                          filled: true,
+                          fillColor: AppColor.yellow,
+                          enabledBorder:
+                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide.none)),
+                      style: const TextStyle(
+                          fontSize: 16,
+                          decoration: TextDecoration.underline,
+                          decorationThickness: 1.0),
+                      onChanged: (value) {
+                        setState(() {
+                          _isNoteValid = value.trim().isNotEmpty;
+                        });
+                      },
                     ),
                     Container(
                       child: FormField<String>(
-                        builder:
-                            (FormFieldState<String> stateFrom) {
+                        builder: (FormFieldState<String> stateFrom) {
                           return InputDecorator(
-                            decoration: InputDecoration(
-                                labelText: "Nhắc nhở:",
-                                errorStyle: const TextStyle(
-                                    color: Colors.redAccent,
-                                    fontSize: 16.0),
-                                hintText: 'Please select expense',
-                                contentPadding:
-                                const EdgeInsets.symmetric(
-                                    vertical: 10.0,
-                                    horizontal: 10.0),
-                                /*border: OutlineInputBorder(
+                            decoration: const InputDecoration(
+                              //labelText: "Nhắc nhở:",
+                              errorStyle: TextStyle(
+                                  color: Colors.redAccent, fontSize: 16.0),
+                              hintText: "Nhắc nhở:",
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 10.0),
+                              /*border: OutlineInputBorder(
                                     borderRadius:
                                     BorderRadius.circular(
-                                        5.0))*/),
+                                        5.0))*/
+                            ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                value: (state.note??Note()).isNote?? true
-                                    ?state.listString[0]:state.listString[1],
+                                value: (state.note ?? Note()).isNote ?? true
+                                    ? state.listString[0]
+                                    : state.listString[1],
                                 isDense: true,
                                 isExpanded: true,
                                 onChanged: (String? newValue) {
-                                  context
-                                      .read<CreateOrEditBloc>()
-                                      .add(OnChangeString(
-                                      newValue ??state.listString[0]));
+                                  context.read<CreateOrEditBloc>().add(
+                                      OnChangeString(
+                                          newValue ?? state.listString[0]));
                                 },
-                                items: state.listString
-                                    .map((String value) {
+                                items: state.listString.map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: value.isEmpty
                                         ? Container()
                                         : Text(value,
-                                        style: StyleBkav
-                                            .textStyleFW400(
-                                            AppColor.text,
-                                            14,
-                                            overflow:
-                                            TextOverflow
-                                                .ellipsis),
-                                        maxLines: 1,
-                                        overflow: TextOverflow
-                                            .ellipsis),
+                                            style: StyleBkav.textStyleFW400(
+                                                AppColor.text, 14,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis),
                                   );
                                 }).toList(),
                               ),
@@ -289,14 +305,16 @@ class _CreateOrEditPageState extends State<CreateOrEditPage> {
                     ),
                     Container(
                       child: TextFormField(
-                        controller: TextEditingController(),
+                        controller: addressController,
                         focusNode: FocusNode(),
+                        maxLength: 128,
                         decoration: InputDecoration(
-                          hintText: "Địa điểm:",
-                          labelText: "Địa điểm",
-                          errorStyle: const TextStyle(
-                              color: Colors.redAccent, fontSize: 16.0)/*,border:InputBorder.none*/
-                        ),
+                            hintText: "Địa điểm:",
+                            labelText: "Địa điểm",
+                            errorStyle: const TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 16.0) /*,border:InputBorder.none*/
+                            ),
                       ),
                     ),
                   ],

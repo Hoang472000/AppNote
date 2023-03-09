@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:note_app/data/entity/category.dart';
+import 'package:note_app/data/entity/todo.dart';
 import 'package:note_app/utils/logger.dart';
 import '../../data/entity/note_entity.dart';
 import '../../data/repository.dart';
@@ -24,28 +25,49 @@ class CreateOrEditBloc extends Bloc<CreateOrEditEvent, CreateOrEditState> {
   FutureOr<void> _getListNote(
       GetListNote event, Emitter<CreateOrEditState> emit) async {
     Note note = Note(
-        categoryId: 0, category: "Công việc", date: DateTime.now().toString(), isNote: false);
+        id: 0,
+        categoryId: 0,
+        category: "Công việc",
+        date: DateTime.now().toString(),
+        isNote: false);
     List<Category> listCategory = [
       Category(0, "Công việc"),
       Category(1, "Học tập"),
       Category(2, "Riêng tư"),
     ];
-    List<String> listString = ["Không hẹn giờ","Nhắc trước 5 phút"];
+    List<String> listString = ["Nhắc trước 5 phút", "Không hẹn giờ"];
     emit(state.copyWith(
-        note: note, listCategory: listCategory, category: listCategory[0], listString: listString));
+        note: note,
+        listCategory: listCategory,
+        category: listCategory[0],
+        listString: listString));
     List<Note> list = await repository.getListNote();
     emit(state.copyWith(listNote: list, isShowProgress: false));
   }
 
   FutureOr<void> _insertOrUpdateNote(
       InsertOrUpdateNote event, Emitter<CreateOrEditState> emit) async {
-    bool isOk = await repository.insertUpdateNote(state.note ?? Note());
+    Note note = Note(
+        id: (state.note ?? Note()).id,
+        categoryId: (state.note ?? Note()).categoryId,
+        category: (state.note ?? Note()).category,
+        date: (state.note ?? Note()).date,
+        address: event.address,
+        noteContent: event.contentNote,
+        isNote: (state.note ?? Note()).isNote,
+        title: event.title,
+        listTodo: [
+          Todo(id: 0, task: 'hoangcv', isCompleted: false),
+          Todo(id: 0, task: 'bkav', isCompleted: true)
+        ]);
+    bool isOk = await repository.insertUpdateNote(note);
     Logger.loggerDebug("HoangCV: _insertOrUpdateNote: ${isOk}");
   }
 
   FutureOr<void> _changeCategory(
       ChangeCategory event, Emitter<CreateOrEditState> emit) async {
     Note note = Note(
+        id: (state.note ?? Note()).id,
         categoryId: event.category.categoryId,
         category: event.category.category,
         date: (state.note ?? Note()).date,
@@ -53,7 +75,7 @@ class CreateOrEditBloc extends Bloc<CreateOrEditEvent, CreateOrEditState> {
         noteContent: (state.note ?? Note()).noteContent,
         isNote: (state.note ?? Note()).isNote,
         title: (state.note ?? Note()).title);
-    emit(state.copyWith(note: note));
+    emit(state.copyWith(note: note, category: event.category));
   }
 
   FutureOr<void> _onChangeDateTime(
@@ -98,12 +120,15 @@ class GetListNote extends CreateOrEditEvent {
 }
 
 class InsertOrUpdateNote extends CreateOrEditEvent {
-  final Note note;
+  final String title;
+  final String contentNote;
+  final String address;
 
-  InsertOrUpdateNote(this.note);
+  InsertOrUpdateNote(
+      {required this.title, required this.contentNote, required this.address});
 
   @override
-  List<Object?> get props => [note];
+  List<Object?> get props => [title, contentNote, address];
 }
 
 class ChangeCategory extends CreateOrEditEvent {
